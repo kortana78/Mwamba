@@ -1,0 +1,46 @@
+# Full stack for Docker hosts (PostGIS + Redis + MinIO + TiTiler).
+# The app runs fully WITHOUT this file (SQLite + in-process jobs + GeoJSON/PNG grids).
+# On a Docker host:  docker compose -f infra/docker-compose.yml up --build
+name: mwamba
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: mwamba
+      POSTGRES_PASSWORD: mwamba
+      POSTGRES_DB: mwamba
+    volumes: [pgdata:/var/lib/postgresql/data]
+    ports: ["5432:5432"]
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: mwamba
+      MINIO_ROOT_PASSWORD: mwamba1234
+    volumes: [miniodata:/data]
+    ports: ["9000:9000", "9001:9001"]
+  titiler:
+    image: ghcr.io/developmentseed/titiler:latest
+    environment:
+      AWS_S3_ENDPOINT_URL: http://minio:9000
+    ports: ["8001:8000"]
+  api:
+    build: { context: .., dockerfile: infra/Dockerfile.api }
+    environment:
+      MWAMBA_DB_URL: postgresql+asyncpg://mwamba:mwamba@db:5432/mwamba
+      REDIS_URL: redis://redis:6379/0
+    ports: ["8000:8000"]
+    depends_on: [db, redis]
+  worker:
+    build: { context: .., dockerfile: infra/Dockerfile.api }
+    command: celery -A workers.celery_app:celery_app worker --loglevel=info
+    environment:
+      MWAMBA_DB_URL: postgresql+asyncpg://mwamba:mwamba@db:5432/mwamba
+      REDIS_URL: redis://6379
+    depends_on: [db, redis]
+volumes:
+  pgdata: {}
+  miniodata: {}

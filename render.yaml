@@ -1,0 +1,58 @@
+# Mwamba Render Blueprint: Python API + static Vite frontend.
+# Deploy: connect GitHub repo -> Render Dashboard -> New -> Blueprint -> select repo.
+# Then set the sync:false env vars below and deploy. See docs/deploy-render.md.
+services:
+  - type: web
+    name: mwamba-api
+    env: python
+    plan: free
+    pythonVersion: 3.11.9
+    rootDir: .
+    buildCommand: pip install -r requirements.txt && pip install ./packages/geo
+    # Single entry: apps/api/app/main.py
+    startCommand: uvicorn apps.api.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEMO_MODE
+        value: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DEMO_USER_EMAIL
+        sync: false
+      - key: DEMO_USER_PASSWORD
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: MAX_UPLOAD_MB
+        value: 100
+      - key: MWAMBA_MAX_GRID_CELLS
+        value: 2500000
+
+  - type: web
+    name: mwamba-web
+    env: static
+    plan: free
+    rootDir: .
+    buildCommand: cd apps/web && npm ci && npm run build
+    staticPublishPath: apps/web/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: mwamba-api
+          type: web
+          property: host
+        # Render injects the host; the app prefixes https:// at runtime via vite?
+        # NOTE: after first deploy, set this to https://<mwamba-api>.onrender.com
+        # manually if the auto host lacks a scheme (see docs/deploy-render.md).

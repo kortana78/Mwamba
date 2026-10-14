@@ -1,0 +1,79 @@
+[
+ {
+  "file": "copernicus_dem_S10E033.tif",
+  "source": "Copernicus DEM GLO-30 (ESA)",
+  "url": "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_S10_00_E033_00_DEM/Copernicus_DSM_COG_10_S10_00_E033_00_DEM.tif",
+  "licence": "Copernicus licence (free, attribution)",
+  "bytes": 40470360
+ },
+ {
+  "file": "malawi_districts_adm2.geojson",
+  "source": "geoBoundaries MWI ADM2 (NSO Malawi via OCHA)",
+  "url": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MWI/ADM2/geoBoundaries-MWI-ADM2.geojson",
+  "licence": "CC-BY 3.0 IGO",
+  "bytes": 5658560
+ },
+ {
+  "file": "chitipa_dem_30m.tif",
+  "source": "Copernicus DEM GLO-30 cropped",
+  "licence": "Copernicus licence (free, attribution)",
+  "retrieval_date": "2026-10-13",
+  "shape": [
+   972,
+   1008
+  ],
+  "resolution_m": 30,
+  "elev_min_m": 1009.8,
+  "elev_max_m": 2115.9,
+  "derivations": [
+   "hillshade",
+   "slope (engine dem_slope layer)"
+  ]
+ },
+ {
+  "file": "usgs_mrds_chitipa.geojson",
+  "source": "USGS Mineral Resources Data System (MRDS)",
+  "url": "https://mrdata.usgs.gov/mrds/search-bbox.php?xmin=33.20&ymin=-9.86&xmax=33.38&ymax=-9.69",
+  "licence": "US public domain",
+  "retrieval_date": "2026-10-13",
+  "finding": "Pilot AOI: exactly 1 record (Chitipa #10023348, dimension STONE prospect, not gold). District sweep adds Chasweta Nb prospect #10183392 north of AOI. ZERO public USGS gold occurrences in/near the pilot AOI."
+ },
+ {
+  "file": null,
+  "source": "Sentinel-2 L2A via Microsoft Planetary Computer STAC",
+  "licence": "Copernicus (free); asset download needs free PC account (SAS)",
+  "retrieval_date": "2026-10-13",
+  "finding": "STAC search verified live. Dry-season low-cloud scene over AOI: S2B_MSIL2A_20240927T074609 (cloud 0.008%). Asset fetch without SAS -> HTTP 409 'public access not permitted'. MANUAL IMPORT: sign the exact query (bbox 33.20,-9.86,33.38,-9.69; 2024-06/10; cloud<20), download B04/B08/B11/B12 + SCL, derive iron-oxide (B04/B02), clay (B11/B12), NDVI mask, upload COG via Ingest > geotiff.",
+  "stac_query": {
+   "collections": [
+    "sentinel-2-l2a"
+   ],
+   "bbox": [
+    33.2,
+    -9.86,
+    33.38,
+    -9.69
+   ],
+   "datetime": "2024-06-01/2024-10-31",
+   "query": {
+    "eo:cloud_cover": {
+     "lt": 20
+    }
+   }
+  }
+ },
+ {
+  "file": null,
+  "source": "OpenStreetMap via Overpass API (roads, water, settlements)",
+  "licence": "ODbL (attribution required)",
+  "retrieval_date": "2026-10-13",
+  "finding": "Status endpoint reachable (HTTP 200) but interpreter returned 400/504 on api.de and kumi mirror at fetch time (service overloaded). Saved queries in docs/data-sources.md; retry documented. Constraints module ready; shows honest empty state meanwhile."
+ },
+ {
+  "file": null,
+  "source": "Protected areas / forest reserves (WDPA / GSD)",
+  "licence": "check per-dataset; WDPA needs registration",
+  "retrieval_date": "2026-10-13",
+  "finding": "Not auto-fetched (licence/registration). MANUAL IMPORT path tested via Ingest > shapefile/geopackage as kind=constraints."
+ }
+]

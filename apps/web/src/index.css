@@ -1,0 +1,14 @@
+@import 'maplibre-gl/dist/maplibre-gl.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { @apply bg-neutral-950 text-neutral-100; }
+.card { @apply bg-neutral-900 border border-neutral-800 rounded-lg p-4; }
+.btn { @apply px-3 py-1.5 rounded bg-amber-500/90 hover:bg-amber-400 text-black text-sm font-medium disabled:opacity-40; }
+.btn-ghost { @apply px-3 py-1.5 rounded border border-neutral-700 hover:bg-neutral-800 text-sm; }
+.input { @apply bg-neutral-800 border border-neutral-700 rounded px-2 py-1.5 text-sm w-full; }
+.label { @apply text-xs uppercase tracking-wide text-neutral-400; }
+table.grid { @apply w-full text-sm; }
+table.grid th { @apply text-left text-neutral-400 font-medium border-b border-neutral-800 py-1 pr-2; }
+table.grid td { @apply border-b border-neutral-800/60 py-1 pr-2 font-mono text-xs; }

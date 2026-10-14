@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mwamba-geo"
+version = "0.1.0"
+description = "Mwamba shared exploration engine (pure python)"
+requires-python = ">=3.11"
+dependencies = ["numpy", "scipy", "shapely", "pyproj"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mwamba_geo*"]

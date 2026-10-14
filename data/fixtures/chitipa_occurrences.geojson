@@ -1,0 +1,217 @@
+{
+ "type": "FeatureCollection",
+ "name": "chitipa_gold_occurrences_SYNTHETIC",
+ "status_label": "SYNTHETIC",
+ "crs": {
+  "type": "name",
+  "properties": {
+   "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+  }
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.2385,
+     -9.6967
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-001",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.2406,
+     -9.7045
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-002",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.2492,
+     -9.709
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-003",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.2523,
+     -9.7162
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-004",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.2614,
+     -9.7205
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-005",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.264,
+     -9.728
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-006",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.2721,
+     -9.7327
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-007",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.2742,
+     -9.7405
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-008",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.2828,
+     -9.745
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-009",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.2859,
+     -9.7523
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-010",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.295,
+     -9.7565
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-011",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.2976,
+     -9.764
+    ]
+   },
+   "properties": {
+    "commodity": "Au",
+    "name": "CHT-012",
+    "source": "synthetic fixture",
+    "status_label": "SYNTHETIC",
+    "type": "orogenic vein"
+   }
+  }
+ ]
+}

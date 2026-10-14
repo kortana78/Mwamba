@@ -1,0 +1,39 @@
+__pycache__/
+*.pyc
+*.pyo
+node_modules/
+dist/
+apps/web/dist/
+storage/
+!storage/.gitkeep
+.env
+.env.*
+!.env.example
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+uploads/
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+# Large / raw downloads: never commit (re-download via docs/data-sources.md).
+# Copernicus full tile (~40 MB) is excluded; the 2.6 MB AOI crop is kept.
+data/real/copernicus_dem_S10E033.tif
+*.tif
+!data/real/chitipa_dem_30m.tif
+# WDPA + any restricted local-only downloads: never commit, never export
+data/wdpa/
+data/restricted/
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+# Playwright / test output
+test-results/
+playwright-report/
+apps/web/test-results/
+apps/web/playwright-report/

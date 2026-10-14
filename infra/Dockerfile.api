@@ -1,0 +1,14 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gdal-bin libgdal-dev \
+    && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt packages/geo/pyproject.toml ./
+COPY packages/geo ./packages/geo
+RUN pip install --no-cache-dir -r requirements.txt && pip install --no-cache-dir -e ./packages/geo
+COPY apps ./apps
+COPY data ./data
+COPY model_templates ./model_templates
+ENV MWAMBA_DB_URL=sqlite+aiosqlite:///./storage/mwamba.db
+ENV MWAMBA_STORAGE_DIR=./storage
+EXPOSE 8000
+CMD ["uvicorn", "apps.api.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
