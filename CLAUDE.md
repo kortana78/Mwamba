@@ -22,8 +22,10 @@ are we, and what is missing?"
 - B. Repo prep: DONE — structure /apps/api /apps/web /packages/geo /data/fixtures
   /data/real /docs /scripts; .gitignore covers .env/*.db/uploads/__pycache__/
   node_modules/dist/.venv + raw 40 MB tile + WDPA; data/real audit in
-  docs/data-sources.md (crop 2.6 MB + districts 5.6 MB + USGS kept; raw tile
-  excluded, re-download URLs listed; nothing >50 MB); secrets scan clean (dev
+  docs/data-sources.md (USGS + manifest pushed; DEM crop 2.5 MB + districts
+  5.4 MB + picker 2.5 MB PENDING push — build-machine uplink 408s on MB bodies,
+  push from faster network per docs/deploy-render.md §2b; app degrades gracefully;
+  nothing >50 MB); secrets scan clean (dev
   defaults only, env overrides in prod); README rewritten (demo placeholder,
   features, labels, Mermaid, Win+Linux setup, deploy, limits, roadmap, licence);
   LICENSE MIT (data under source licences); CI `.github/workflows/ci.yml`

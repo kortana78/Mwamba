@@ -64,9 +64,10 @@ the gold model template. Obtain data from authors/GSD.
 
 | File | In git? | Licence | Re-download |
 |---|---|---|---|
-| `data/real/chitipa_dem_30m.tif` (2.6 MB AOI crop) | ✅ yes | Copernicus (free, attribution) | — |
+| `data/real/chitipa_dem_30m.tif` (2.5 MB AOI crop) | ⏳ pending — this machine's uplink times out on MB uploads; push from a faster network (see deploy guide §2b) | Copernicus (free, attribution) | crop locally from the raw tile below with `scripts/` or re-push |
 | `data/real/usgs_mrds_chitipa.geojson` | ✅ yes | US public domain | `https://mrdata.usgs.gov/mrds/search-bbox.php?xmin=33.20&ymin=-9.86&xmax=33.38&ymax=-9.69` |
-| `data/real/malawi_districts_adm2.geojson` (5.6 MB) | ✅ yes | CC-BY 3.0 IGO | `https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MWI/ADM2/geoBoundaries-MWI-ADM2.geojson` |
+| `data/real/malawi_districts_adm2.geojson` (5.4 MB) | ⏳ pending — same as above | CC-BY 3.0 IGO | `https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MWI/ADM2/geoBoundaries-MWI-ADM2.geojson` |
+| `apps/web/public/districts.json` (2.5 MB slimmed picker) | ⏳ pending — same as above | CC-BY 3.0 IGO (derived) | rebuilt from the ADM2 file |
 | `data/real/manifest.json` | ✅ yes | — | — |
 | `data/real/copernicus_dem_S10E033.tif` (~40 MB raw tile) | ❌ excluded (`.gitignore`) | Copernicus (free, attribution) | `https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_10_S10_00_E033_00_DEM/Copernicus_DSM_COG_10_S10_00_DEM.tif` |
 | WDPA / restricted (`data/wdpa/`, `data/restricted/`) | ❌ never | per-dataset (registration) | Manual import via Ingest → shapefile/geopackage as `kind=constraints` |

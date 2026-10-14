@@ -25,8 +25,24 @@ gh repo create mwamba --private --source=. --push
 
 If `gh` is not authenticated, STOP and run `gh auth login` first.
 Never commit `.env`, `*.db`, `storage/`, or `data/real/copernicus_dem_S10E033.tif`
-(the raw 40 MB tile — re-download below). The 2.6 MB AOI crop
-`data/real/chitipa_dem_30m.tif` IS committed (Copernicus attribution).
+(the raw 40 MB tile — re-download per `docs/data-sources.md`).
+
+## 2b. Upload the 3 data files (from a faster network)
+
+The code push is done, but three redistributable data files (DEM crop 2.5 MB,
+districts 5.4 MB, picker 2.5 MB) could not upload from the build machine
+(its uplink stalls on MB-sized bodies — HTTP 408). From any machine with a
+decent connection, in the repo root:
+
+```powershell
+git add data/real/chitipa_dem_30m.tif data/real/malawi_districts_adm2.geojson apps/web/public/districts.json
+git commit -m "Add redistributable real data"
+git push
+```
+
+The app boots fine without them (seed skips a missing DEM, the district picker
+shows an honest "not bundled" note), but the real-data demo project needs the
+DEM crop to show its VERIFIED dataset.
 
 ## 3. New Blueprint
 

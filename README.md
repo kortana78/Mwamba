@@ -9,6 +9,9 @@ evidence gate that refuses to rank targets when the geology isn't there yet.
 
 - **Live demo:** _pending — fill after Render deploy (frontend + `/api/health` in
   `docs/deploy-render.md`)_ · "Try the demo" one-click login, no password on screen.
+  Note: three redistributable data files (DEM crop, districts, picker — see
+  `docs/data-sources.md`) still need `git push` from a faster network; the app
+  boots and demos fully without them.
 - **Screenshots:** _pending — add `docs/screenshots/` after first live verify
   (Workspace, Map, Models gate, Targets, Dossier, Validation). No mockups._
 - Pilot: **gold in the Chitipa belt** (commodity + AOI configurable: Au/C/REE/Nb/Ti/U).
