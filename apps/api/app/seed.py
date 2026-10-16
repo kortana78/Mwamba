@@ -23,25 +23,27 @@ async def seed() -> dict:
         org = models.Organisation(name="Mwamba Demo Org")
         db.add(org)
         await db.flush()
+        password, generated = settings.admin_password_or_generate()
         admin = models.User(email=settings.admin_email(),
-                            password_hash=hash_password(settings.admin_password()),
+                            password_hash=hash_password(password),
                             role="admin", org_id=org.id)
         db.add(admin)
         await db.flush()
-        # Demo account: analyst role so it can run analyses in demo projects
-        # but cannot access Admin (require_role("admin") stays closed).
-        # Seeded always (not only DEMO_MODE) so the live prototype has a
-        # one-click "Try the demo" login; password only from env.
-        demo = models.User(email=settings.demo_email(),
-                           password_hash=hash_password(settings.demo_password()),
-                           role="analyst", org_id=org.id)
-        db.add(demo)
-        await db.flush()
+        if generated:
+            # No default password in code: print the one-time generated one.
+            # Set ADMIN_EMAIL/ADMIN_PASSWORD env vars to control it.
+            import structlog as _sl
+            _sl.get_logger().warning("mwamba_admin_generated_password",
+                                     email=settings.admin_email(),
+                                     password=password)
+            print(f"[mwamba] generated admin login: {settings.admin_email()} / {password}",
+                  flush=True)
         aoi = {"type": "Polygon", "coordinates": [[[33.20, -9.86], [33.38, -9.86],
                                                    [33.38, -9.69], [33.20, -9.69], [33.20, -9.86]]]}
         proj = models.Project(org_id=org.id, name="Chitipa Gold — Synthetic demo (SYNTHETIC)",
                               commodity="Au", aoi_geojson=aoi, grid_m=200.0,
-                              status_label="SYNTHETIC", created_by=admin.id)
+                              status_label="SYNTHETIC", visibility="public",
+                              is_demo=True, created_by=admin.id)
         db.add(proj)
         await db.flush()
         # ingest fixture files as stored datasets (copies into storage/uploads)
@@ -64,6 +66,7 @@ async def seed() -> dict:
             db.add(models.Dataset(
                 org_id=org.id, project_id=proj.id, name=title, kind=kind,
                 format="geojson", crs_original="EPSG:4326", status_label="SYNTHETIC",
+                visibility="public",
                 licence="Synthetic fixture — test/demo only, not geological data",
                 source_url="", provenance={"seed": True},
                 processing_history=[{"step": "seed"}],
@@ -93,7 +96,7 @@ async def seed() -> dict:
             db.add(models.Dataset(
                 org_id=org.id, project_id=proj.id, name="Chitipa soil geochem (SYNTHETIC)",
                 kind="geochem", format="csv->geojson", crs_original="EPSG:4326",
-                status_label="SYNTHETIC",
+                status_label="SYNTHETIC", visibility="public",
                 licence="Synthetic fixture — test/demo only",
                 source_url="", provenance={"seed": True},
                 processing_history=[{"step": "seed-csv-to-geojson"}],
@@ -123,7 +126,8 @@ async def _seed_ree(db, org, admin) -> None:
         return
     proj = models.Project(org_id=org.id, name="Chilwa Alkaline Province REE Pilot (real data)",
                           commodity="REE", aoi_geojson=aoi_ree, grid_m=200.0,
-                          status_label="No data", created_by=admin.id)
+                          status_label="No data", visibility="public",
+                          is_demo=False, created_by=admin.id)
     db.add(proj)
     await db.flush()
 
@@ -144,7 +148,8 @@ async def _seed_real(db, org, admin, aoi) -> None:
             manifest = {m.get("file"): m for m in json.load(f) if m.get("file")}
     proj = models.Project(org_id=org.id, name="Chitipa Gold — Real data (evidence incomplete)",
                           commodity="Au", aoi_geojson=aoi, grid_m=200.0,
-                          status_label="No data", created_by=admin.id)
+                          status_label="No data", visibility="public",
+                          is_demo=False, created_by=admin.id)
     db.add(proj)
     await db.flush()
     up = os.path.join(settings.MWAMBA_STORAGE_DIR, "uploads")
@@ -171,6 +176,7 @@ async def _seed_real(db, org, admin, aoi) -> None:
             org_id=org.id, project_id=proj.id, name="Chitipa DEM 30 m (Copernicus GLO-30 crop)",
             kind="dem", format="geotiff", crs_original="EPSG:4326",
             status_label="VERIFIED" if quality.get("ok") else "REVIEWED",
+            visibility="public",
             licence="Copernicus licence (free, attribution)",
             source_url="https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/",
             provenance={"seed": True, "source": "Copernicus DEM GLO-30 (ESA)",
@@ -189,7 +195,7 @@ async def _seed_real(db, org, admin, aoi) -> None:
         db.add(models.Dataset(
             org_id=org.id, project_id=proj.id, name="USGS MRDS Chitipa sweep (VERIFIED)",
             kind="occurrences", format="geojson", crs_original="EPSG:4326",
-            status_label="VERIFIED", licence="US public domain",
+            status_label="VERIFIED", visibility="public", licence="US public domain",
             source_url="https://mrdata.usgs.gov/mrds/search-bbox.php",
             provenance={"seed": True, "source": "USGS MRDS",
                         "retrieval_date": "2026-10-13",

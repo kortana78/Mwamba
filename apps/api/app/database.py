@@ -55,3 +55,21 @@ async def init_db() -> None:
             os.makedirs(parent, exist_ok=True)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(_migrate_sqlite)
+
+
+def _migrate_sqlite(sync_conn) -> None:
+    """Lightweight additive migration for pre-existing SQLite files
+    (new columns only; fresh DBs already have them via create_all)."""
+    import sqlalchemy as _sa
+    insp = _sa.inspect(sync_conn)
+    wanted = {"projects": {"visibility": "VARCHAR(16) DEFAULT 'private'",
+                           "is_demo": "BOOLEAN DEFAULT 0"},
+              "datasets": {"visibility": "VARCHAR(16) DEFAULT 'private'"}}
+    for table, cols in wanted.items():
+        if table not in insp.get_table_names():
+            continue
+        existing = {c["name"] for c in insp.get_columns(table)}
+        for col, ddl in cols.items():
+            if col not in existing:
+                sync_conn.exec_driver_sql(f"ALTER TABLE {table} ADD COLUMN {col} {ddl}")

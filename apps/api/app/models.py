@@ -5,7 +5,7 @@ from __future__ import annotations
 import datetime as dt
 import uuid
 
-from sqlalchemy import String, Text, Float, Integer, DateTime, ForeignKey, JSON
+from sqlalchemy import String, Text, Float, Integer, Boolean, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import Base
 
@@ -48,6 +48,8 @@ class Project(Base):
     aoi_geojson: Mapped[dict] = mapped_column(JSON)
     grid_m: Mapped[float] = mapped_column(Float, default=100.0)
     status_label: Mapped[str] = mapped_column(String(32), default="VERIFIED")
+    visibility: Mapped[str] = mapped_column(String(16), default="private")  # public|private
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False)  # True = sandbox runs allowed here
     created_by: Mapped[str] = mapped_column(String(16))
     created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
@@ -62,6 +64,7 @@ class Dataset(Base):
     format: Mapped[str] = mapped_column(String(32))
     crs_original: Mapped[str] = mapped_column(String(32), default="EPSG:4326")
     status_label: Mapped[str] = mapped_column(String(32), default="VERIFIED")
+    visibility: Mapped[str] = mapped_column(String(16), default="private")  # public|private
     licence: Mapped[str] = mapped_column(String(300), default="")
     source_url: Mapped[str] = mapped_column(String(600), default="")
     provenance: Mapped[dict] = mapped_column(JSON, default=dict)

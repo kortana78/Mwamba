@@ -4,17 +4,17 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 import structlog
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from .config import settings
 from .database import init_db
 from .seed import seed
+from .ratelimit import limiter
 from .routers import auth, projects, datasets, ingest, runs, targets, validation, reports, sources, admin
 
 log = structlog.get_logger()
-limiter = Limiter(key_func=get_remote_address)
 
 
 @asynccontextmanager
@@ -31,6 +31,7 @@ app = FastAPI(title="Mwamba API",
                           "Scores are relative rankings, never deposit probabilities.",
               version="0.1.0", lifespan=lifespan)
 app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 origins = settings.cors_origins()
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True,
@@ -51,8 +52,9 @@ app.include_router(admin.router)
 def _health_payload() -> dict:
     return {"ok": True, "code_version": settings.CODE_VERSION,
             "postgis": False, "redis": bool(settings.REDIS_URL),
-            "demo_mode": settings.DEMO_MODE,
-            "note": "SQLite + in-process jobs build. "
+            "public_access": True, "sandbox_runs": bool(settings.PUBLIC_SANDBOX_RUNS),
+            "note": "Public read-only access; writes require admin login. "
+                    "SQLite + in-process jobs build. "
                     "PostGIS/Redis paths activate when configured. "
                     "On Render free tier the filesystem is ephemeral: "
                     "uploads and new runs reset on restart."}

@@ -1,149 +1,158 @@
-# MWAMBA — Malawi Mineral Exploration Intelligence Platform
+# Mwamba: Malawi Mineral Exploration Intelligence Platform
 
-> "Where should we look next for commodity X, why there, how confident are we, and what is missing?"
+**Where should we look next, why there, how confident are we, and what is missing?**
 
-Mwamba (Challenge 1 entry) turns Malawi's scattered geological, geophysical,
-geochemical, remote-sensing and historical exploration data into **ranked,
-explainable, field-ready exploration targets** — with honest data labels and an
-evidence gate that refuses to rank targets when the geology isn't there yet.
+Mwamba is a web platform that helps geologists, explorers, researchers and government teams turn Malawi's scattered geological data into ranked, explainable exploration targets.
 
-- **Live demo:** _pending — fill after Render deploy (frontend + `/api/health` in
-  `docs/deploy-render.md`)_ · "Try the demo" one-click login, no password on screen.
-  Note: three redistributable data files (DEM crop, districts, picker — see
-  `docs/data-sources.md`) still need `git push` from a faster network; the app
-  boots and demos fully without them.
-- **Screenshots:** _pending — add `docs/screenshots/` after first live verify
-  (Workspace, Map, Models gate, Targets, Dossier, Validation). No mockups._
-- Pilot: **gold in the Chitipa belt** (commodity + AOI configurable: Au/C/REE/Nb/Ti/U).
-- Every record labelled `VERIFIED / DERIVED / SYNTHETIC / MODEL OUTPUT / REVIEWED`
-  (+ `UNVERIFIED` for incomplete citations, `EVIDENCE INCOMPLETE` for gated runs).
-- Scores are **relative rankings 0..1**, never "probability of an economic deposit".
-- Missing data is **not** negative evidence — a coverage layer is always computed.
-- Deterministic: same inputs + seed ⇒ byte-identical grid (tested).
+It was built for **Challenge 1: From Geological Data to Mineral Discovery** of the Malawi UniPod / timbuktoo MineTech Pan-African Exploration Technology Pre-Incubation Programme.
 
-## Features
+**Status:** working prototype. Live demo coming soon.
 
-- Projects (commodity + Malawi-validated AOI: draw / 28-district picker / GeoJSON-KML upload).
-- Ingest: GeoJSON/CSV (CRS auto-detect Malawi UTM36S 32736 vs Arc1950 20936),
-  zipped shapefile, GeoPackage, KML, GeoTIFF/COG (DEM/geophysics/remote sensing),
-  Sentinel-2 multiband → DERIVED iron-oxide + clay ratios, PDF reports → review queue.
-- Cited-occurrence form: VERIFIED only with full citation (author + year + title).
-- Engine: distance-to-structure decay, fault/lineament/drainage density,
-  lithology scores, IDW geochem, DEM slope + DERIVED lineaments ("unverified
-  structural proxy"), weighted overlay + fuzzy gamma, coverage everywhere.
-- **Evidence gate**: commodity templates list required groups; runs missing groups
-  are labelled `INSUFFICIENT EVIDENCE — not a targeting result` and generate zero
-  ranked targets. Defaults target ~5–20 pilot targets (configurable).
-- Targets: percentile → merge → min-area → rank; dossier with evidence breakdown,
-  constraints, next steps, citations; review workflow → REVIEWED.
-- Validation: success/prediction-rate curves, AUC, deterministic holdout,
-  WofE/ML gated (needs ≥10 occurrences, honest message otherwise).
-- Exports: GeoJSON/CSV/KML + dossier PDF + project summary; audit log; API keys.
+## The problem
 
-## Data honesty labels
+Malawi has a lot of geological knowledge: national geological mapping, airborne geophysical surveys, geochemical sampling, research studies and decades of exploration reports. But:
+
+* The data sits in different formats, places and access levels, and much of it is locked in old scanned reports.
+* Combining many layers to pick exploration targets takes specialist GIS and geoscience skills.
+* Targeting is slow, costly and depends on a few specialists.
+* Junior explorers, researchers and emerging Malawian explorers face the biggest barriers.
+
+## What Mwamba does
+
+Mwamba brings the data into one place, checks it, turns it into evidence, and ranks areas worth investigating. Every result explains itself.
+
+1. **Bring data in.** Upload maps, points, rasters and reports. Mwamba checks coordinates, geometry, quality and source.
+2. **Build evidence.** It turns raw data into evidence layers such as distance to faults, structural density, rock type favourability, geochemical anomalies, terrain and satellite alteration signals.
+3. **Score the ground.** It combines the evidence with transparent methods (weighted overlay and fuzzy logic). Every weight and setting is visible and adjustable.
+4. **Rank targets.** It outlines the most promising areas and ranks them.
+5. **Explain each target.** Each target gets a dossier: why it scored high, which evidence supports it, what conflicts with it, what is missing, nearby constraints such as protected areas or settlements, and suggested next field steps.
+6. **Review and export.** Geologists review targets and sign them off. Results export as GeoJSON, CSV, KML and PDF for field teams.
+
+## Built to be honest
+
+Exploration decisions cost real money, so Mwamba never hides what its results are based on.
+
+**Every record carries a label:**
 
 | Label | Meaning |
 |---|---|
-| `VERIFIED` | Sourced with provenance + licence (e.g. Copernicus DEM, USGS MRDS). |
-| `DERIVED` | Computed from VERIFIED (slope, ratios, DEM lineaments + recipe). |
-| `SYNTHETIC` | Fixtures in `data/fixtures` — pipeline tests/demo only, never geology. |
-| `MODEL OUTPUT` | Scores/targets/exports from a run. |
-| `REVIEWED` | Human sign-off with reviewer + date. |
-| `UNVERIFIED` | Incomplete citation — stored, never validates a model silently. |
-| `EVIDENCE INCOMPLETE` | Gated run/project — surface for inspection only, no ranked targets. |
-| `MIXED` / `No data` | Project badge from its datasets (never VERIFIED when empty). |
+| VERIFIED | Real data with a known source and licence |
+| DERIVED | Calculated from verified data, with the recipe recorded |
+| SYNTHETIC | Made up test data, used only to test the software |
+| MODEL OUTPUT | Scores and targets produced by an analysis run |
+| REVIEWED | Checked and signed off by a person, with name and date |
+| UNVERIFIED | A record with an incomplete citation |
+| EVIDENCE INCOMPLETE | An analysis that lacks the evidence needed for real targeting |
 
-Seeded on boot: **"Chitipa Gold — Synthetic demo"** (full loop: run → targets →
-dossier → validation) and **"Chitipa Gold — Real data (evidence incomplete)"**
-(Copernicus DEM + USGS sweep; gold gate honestly insufficient).
+**Other rules built into the platform:**
 
-## Architecture
+* **Evidence gate.** Each commodity has a list of required evidence types. For gold: structure, host rock, and alteration or geochemistry. If these are missing, Mwamba still shows the map for inspection but refuses to produce a ranked target list.
+* **Scores are rankings, not chances.** A score compares areas with each other. It is never presented as the probability of finding a mine.
+* **Missing data is not bad news.** An area with no data is not marked as unpromising. Data coverage is shown as a separate layer.
+* **Repeatable.** The same inputs and settings always give exactly the same result.
+* **Machine learning only when justified.** Statistical and machine learning methods unlock only when there are enough confirmed mineral occurrences to test them properly.
+
+## Pilot: gold in the Chitipa belt
+
+The platform ships with two demo projects:
+
+* **Chitipa Gold, synthetic demo.** Uses made up test data to show the full workflow, from analysis to targets, dossiers and validation. Its results test the software, not geology.
+* **Chitipa Gold, real data.** Uses real public data (Copernicus elevation model and USGS mineral records). It is honestly marked EVIDENCE INCOMPLETE, because the public data available so far is not enough to target gold. This shows the evidence gate working as designed.
+
+The commodity and area are configurable: gold, graphite, rare earth elements, niobium, rutile and uranium are supported.
+
+## Features
+
+* Projects with a commodity and an area of interest (draw on the map, pick from 28 districts, or upload a boundary)
+* Upload of GeoJSON, CSV, Shapefile, GeoPackage, KML and GeoTIFF
+* Automatic handling of Malawi coordinate systems, including older Arc 1950 data
+* Sentinel-2 satellite bands turned into iron oxide and clay alteration layers
+* PDF report upload into a human review queue
+* Cited occurrence entry: a record counts as verified only with a full citation
+* Lineaments derived from the elevation model, clearly labelled as unverified structural hints
+* Interactive map with layers, inspector and shareable views
+* Ranked targets with full dossiers and a geologist review workflow
+* Validation: success rate and prediction rate curves, AUC and held out occurrence tests
+* Exports, audit log and API keys
+
+## How it is built
 
 ```mermaid
 flowchart LR
-  subgraph WEB["apps/web (React/Vite/MapLibre)"]
-    UI[Workspace/Map/Models/Targets/Dossier/Validation/Reports]
-  end
-  subgraph API["apps/api (FastAPI + SQLite)"]
-    R[routers: auth/projects/datasets/ingest/runs/targets/validation/reports/admin]
-    S[services: prospectivity/targets/validation/exports/constraints]
-    DB[(SQLite: projects/datasets/runs/targets + grids .npy)]
-  end
-  subgraph GEO["packages/geo (mwamba_geo, pure python)"]
-    E[grid/crs/validate/features/scoring/validation/evidence]
-  end
-  UI -->|VITE_API_URL or /api proxy| R --> S --> E
-  S --> DB --> UI
+  A[Web app<br/>React, MapLibre] --> B[API<br/>FastAPI]
+  B --> C[Analysis engine<br/>Python geospatial library]
+  B --> D[(Database<br/>SQLite now, PostGIS planned)]
 ```
 
-Runtime: SQLite (`storage/mwamba.db`), in-process BackgroundTasks (Celery path when
-`REDIS_URL` set), grids as `.npy` served as sampled GeoJSON/PNG (no TiTiler needed).
-`infra/docker-compose.yml` documents the full PostGIS/Redis/MinIO/TiTiler stack for
-Docker hosts. Repository layer (`database.py`/`models.py`) is isolated for a PostGIS
-cutover (see `docs/postgis-migration.md`).
+* **Web app:** React, Vite, TypeScript, MapLibre GL, TanStack Query, Recharts
+* **API:** Python, FastAPI, SQLite, token based sign in
+* **Engine:** a standalone Python library for coordinates, validation, evidence layers, scoring and validation
+* **Hosting:** prepared for Render (API as a Python web service, web app as a static site)
+* **Cost:** runs on free or low cost services, with no paid map tiles, paid APIs or proprietary GIS software
 
-## Local setup
+## Run it locally
 
-Windows (PowerShell, one command each):
-
-```powershell
-# backend (repo root)
-pip install -r requirements.txt; pip install ./packages/geo
-uvicorn apps.api.app.main:app --port 8000
-# frontend (new terminal)
-Set-Location apps/web; npm ci; npm run dev
-# App: http://localhost:5173   API docs: http://localhost:8000/docs   Health: http://localhost:8000/health
-```
-
-Linux/macOS:
+You need Python 3.11 and Node.js 18 or newer.
 
 ```bash
-pip install -r requirements.txt && pip install ./packages/geo
-uvicorn apps.api.app.main:app --port 8000 &
-cd apps/web && npm ci && npm run dev
+# API (from the repository root)
+pip install -r requirements.txt
+pip install ./packages/geo
+uvicorn apps.api.app.main:app --port 8000
 ```
 
-Login: "Try the demo" when `DEMO_MODE=true`, else `admin@mwamba.local / Mwamba123!`
-(seeded; passwords only from env in production — see `.env.example`).
+```bash
+# Web app (in a second terminal)
+cd apps/web
+npm ci
+npm run dev
+```
 
-Tests:
+Open http://localhost:5173. API documentation is at http://localhost:8000/docs.
 
-```powershell
+Copy `.env.example` to `.env` and set your own admin email and password before first start. With `DEMO_MODE=true`, a "Try the demo" button signs you in without a password.
+
+Run the tests:
+
+```bash
 pytest apps/api/tests packages/geo/tests -q
-Set-Location apps/web; npm test; npm run build
-npx playwright test   # needs browsers + both servers (see docs/smoke-test.md for manual path)
+cd apps/web && npm test
 ```
 
-## Deployment (Render)
+## Data sources
 
-Blueprint `render.yaml`: `mwamba-api` (Python, `pip install -r requirements.txt &&
-pip install ./packages/geo`, `uvicorn apps.api.app.main:app --host 0.0.0.0 --port $PORT`,
-health `/api/health`) + `mwamba-web` (static, `npm ci && npm run build`,
-publish `apps/web/dist`, SPA rewrite `/* → /index.html`, `VITE_API_URL` → API).
-Full steps + verify checklist + env table: **`docs/deploy-render.md`**.
+| Source | Use | Status |
+|---|---|---|
+| Copernicus DEM (30 m) | Elevation, slope, lineaments | In use |
+| USGS mineral resource records | Known occurrences | In use |
+| Malawi district boundaries | Area of interest picker | In use |
+| OpenStreetMap | Roads, settlements, water | Manual import |
+| Sentinel-2 | Alteration signals | Manual import |
+| Protected areas (WDPA) | Constraints | Manual import, not redistributed |
+| Geological Survey Department / GEMMAP data | Geology, geochemistry, geophysics | To be requested |
+| Published studies and survey bulletins | Cited occurrences | Manual entry |
 
-## Limitations
+Details and licences are in `docs/data-sources.md`.
 
-- Free-tier filesystem is ephemeral: DB seeded on startup; uploads/new runs reset
-  (banner shown). See `docs/deploy-render.md`.
-- In-process jobs: pilot AOIs at 100–200 m grid, 240 s timeout with clear error.
-- SQLite now; Postgres via `DATABASE_URL` later (documented, not required).
-- Real-data gold pilot is intentionally `EVIDENCE INCOMPLETE` (only DEM slope +
-  non-gold USGS records) — the gate working as designed.
-- OSM/Sentinel-2/protected-areas need manual import (queries saved in
-  `docs/data-sources.md` + `docs/manual-data-download.md`).
-- WofE training ships next; label gate + weighted/fuzzy active now.
+## Current limitations
+
+* No detailed geology, geochemistry or airborne geophysics loaded yet. These depend on access to national datasets.
+* Not enough confirmed gold occurrences in the pilot area yet for real data validation.
+* Commodity models are drafts and need review by experienced geologists.
+* Uses SQLite for now, which suits pilot areas but not national scale.
+* On free hosting, the demo resets uploads and new runs when the server restarts.
+* This is a prototype and has not been security audited for production use.
 
 ## Roadmap
 
-- [ ] Live URLs + screenshots in this README + `docs/deploy-render.md` log.
-- [ ] PostGIS cutover (plan in `docs/postgis-migration.md`).
-- [ ] WofE training when ≥10 occurrences; richer ML comparison.
-- [ ] Sentinel-2 auto STAC fetch; OSM constraint sync.
-- [ ] Playwright in CI (spec ships at `apps/web/tests/e2e/happy-path.spec.ts`).
+* Live demo and screenshots
+* Access to Geological Survey Department and GEMMAP data
+* Cited gold occurrences for the Chitipa pilot and a second pilot for rare earth elements in southern Malawi
+* Geologist review of commodity models
+* Move to PostGIS for national scale
+* Weights of evidence and machine learning once enough occurrences exist
+* Field checks of top targets with partners
 
 ## Licence
 
-MIT for code (see `LICENSE`); data under its source licences
-(Copernicus attribution, CC-BY 3.0 IGO, US public domain, ODbL — see
-`docs/data-sources.md`). Synthetic fixtures are test/demo only.
+Code is released under the MIT licence (see `LICENSE`). Data keeps its original licence: Copernicus attribution, US public domain, ODbL for OpenStreetMap and others listed in `docs/data-sources.md`. Synthetic data is for testing and demonstration only.

@@ -54,10 +54,11 @@ def validate_aoi(obj: dict) -> dict:
     return {"type": geom["type"], "coordinates": geom["coordinates"]}
 
 
-class RegisterIn(BaseModel):
+class UserCreateIn(BaseModel):
+    """Admin-created user (open registration is disabled — the public needs
+    no account; writes are admin-only)."""
     email: str = Field(min_length=3, max_length=320)
     password: str = Field(min_length=8, max_length=128)
-    org_name: str = Field(min_length=1, max_length=200)
     role: str = "viewer"
 
 
@@ -83,7 +84,19 @@ class ProjectIn(BaseModel):
     commodity: str = "Au"
     aoi_geojson: dict
     grid_m: float = 100.0
+    visibility: Literal["public", "private"] = "private"
     # NOTE: no status_label input — project status derives from its datasets.
+
+
+class ProjectPatch(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=200)
+    visibility: Literal["public", "private"] | None = None
+    is_demo: bool | None = None
+
+
+class DatasetPatch(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=300)
+    visibility: Literal["public", "private"] | None = None
 
 
 class DatasetIn(BaseModel):
